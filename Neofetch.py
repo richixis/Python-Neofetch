@@ -1,33 +1,36 @@
-import platform, os, socket, subprocess, psutil
+import os
+import platform
+import socket
+import psutil
+from datetime import timedelta
+from time import time
 
-def os_info():
-    try: return platform.system() + " " + platform.release()
-    except: return "Unknown"
+def neofetch():
+    user = os.getenv("USER") or os.getenv("LOGNAME") or "unknown"
+    host = socket.gethostname()
+    os_info = f"{platform.system()} {platform.release()}"
+    uptime_seconds = time() - psutil.boot_time()
+    uptime = str(timedelta(seconds=uptime_seconds)).split('.')[0]
 
-def uptime():
-    try:
-        out = subprocess.check_output(["uptime", "-p"], text=True).strip()
-        return out[3:] if out.lower().startswith("up ") else out
-    except: return "Unknown"
+    cpu = platform.processor() or "Unknown"
+    ram = psutil.virtual_memory()
 
-def cpu_info():
-    try:
-        with open("/proc/cpuinfo") as f:
-            for l in f:
-                if l.startswith("Hardware"):
-                    return l.split(":")[1].strip()
-    except: pass
-    return platform.processor() or "Unknown"
+    used_ram = ram.used // 1024 // 1024
+    total_ram = ram.total // 1024 // 1024
 
-def ram_info():
-    try:
-        m = psutil.virtual_memory()
-        return f"{m.used//(1024**2)}MB / {m.total//(1024**2)}MB"
-    except: return "Unknown"
-print("")
-print(f"User: {os.getenv('USER','unknown')}")
-print(f"Host: {socket.gethostname()}")
-print(f"OS: {os_info()}")
-print(f"Uptime: {uptime()}")
-print(f"CPU: {cpu_info()}")
-print(f"RAM: {ram_info()}")
+    # Цвета ANSI
+    CYAN = "\033[96m"
+    GREEN = "\033[92m"
+    MAGENTA = "\033[95m"
+    RESET = "\033[0m"
+    BOLD = "\033[1m"
+
+    print()
+    print(f"{BOLD}{MAGENTA}🌐 RichixOS NeoFetch 💀{RESET}")
+    print(f"{CYAN}👤 User:   {RESET}{user}")
+    print(f"{CYAN}💻 Host:   {RESET}{host}")
+    print(f"{CYAN}📀 OS:     {RESET}{os_info}")
+    print(f"{CYAN}⏳ Uptime: {RESET}{uptime}")
+    print(f"{CYAN}⚙️  CPU:    {RESET}{cpu}")
+    print(f"{CYAN}🧠 RAM:    {RESET}{used_ram}MB / {total_ram}MB")
+    print()
