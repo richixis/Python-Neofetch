@@ -24,7 +24,7 @@ def ram_info():
         m = psutil.virtual_memory()
         return f"{m.used//(1024**2)}MB / {m.total//(1024**2)}MB"
     except: return "Unknown"
-
+print("")
 print(f"User: {os.getenv('USER','unknown')}")
 print(f"Host: {socket.gethostname()}")
 print(f"OS: {os_info()}")
