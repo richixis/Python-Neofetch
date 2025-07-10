@@ -22,4 +22,6 @@ def get_cpu_model():
     except:
         return "Unavailable"
 
-fetch()
+# ✅ Запуск только если это основной файл
+if __name__ == "__main__":
+    fetch()
